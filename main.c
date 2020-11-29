@@ -66,7 +66,7 @@ int main()
 
             EndMode3D();
 
-            DrawText("This is a raylib example", 10, 40, 20, DARKGRAY);
+            DrawText("This is a raylib example Peter", 10, 40, 20, DARKGRAY);
 
             DrawFPS(10, 10);
 
