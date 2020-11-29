@@ -60,7 +60,7 @@ int main()
 
             BeginMode3D(camera);
 
-                DrawCube(cubePosition, 2.0f, 2.0f, 2.0f, RED);
+                DrawCube(cubePosition, 2.0f, 2.0f, 2.0f, BLUE);
                 DrawCubeWires(cubePosition, 2.0f, 2.0f, 2.0f, MAROON);
                 DrawGrid(10, 1.0f);
 
