@@ -18,7 +18,7 @@
 *   Copyright (c) 2013-2020 Ramon Santamaria (@raysan5)
 *
 ********************************************************************************************/
-
+#include <stdio.h>
 #include "raylib.h"
 
 int main() 
@@ -43,7 +43,7 @@ int main()
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
-
+    bool pause = 0;
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
@@ -52,6 +52,9 @@ int main()
         UpdateCamera(&camera);
         //----------------------------------------------------------------------------------
 
+        if (IsKeyPressed(KEY_SPACE)){
+            pause = !pause;
+        }
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
@@ -59,14 +62,25 @@ int main()
             ClearBackground(RAYWHITE);
 
             BeginMode3D(camera);
-
-                DrawCube(cubePosition, 2.0f, 2.0f, 2.0f, RED);
+                if(pause==0){
+                    DrawCube(cubePosition, 2.0f, 2.0f, 2.0f, RED);
+                }
+                if(pause==1){
+                    DrawCube(cubePosition, 2.0f, 2.0f, 2.0f, BLUE);
+                }
                 DrawCubeWires(cubePosition, 2.0f, 2.0f, 2.0f, MAROON);
                 DrawGrid(10, 1.0f);
 
             EndMode3D();
 
-            DrawText("This is a raylib example", 10, 40, 20, DARKGRAY);
+            DrawText("This is a raylib sd", 10, 40, 20, DARKGRAY);
+
+            if(pause==0){
+                DrawText("Pause: 0", 10, 60, 20, DARKGRAY);
+            }
+            else{
+                DrawText("Pause: 1", 10, 60, 20, DARKGRAY);
+            }
 
             DrawFPS(10, 10);
 
