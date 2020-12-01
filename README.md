@@ -1,7 +1,7 @@
-## NewProject
+# ProjectStainedGlass
 A new project using raylib
 
-# Compiling and Running
+## Compiling and Running
 1. Create a new file in the NewProject directory called 'game.exe'.
     - If this doesn't work, create 'game.exe' in the 'vscode' folder, then move it out into 'NewProject'.
 2. Make sure the 'game.exe' tab is open.
