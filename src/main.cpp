@@ -20,8 +20,12 @@
 ********************************************************************************************/
 
 #include "raylib.h"
-#include <boost/optional.hpp>
+#include <vector>
+#include <string>
+#include <iostream>
+#include <boost_1_73_0/boost/config/user.hpp>
 
+using namespace std;
 int main() 
 {
     // Initialization
@@ -47,7 +51,7 @@ int main()
 
             ClearBackground(RAYWHITE);
             
-            //std::cout << "hello uwu";
+            std::cout << "hello uwu" << std::endl;
 
             DrawFPS(10, 10);
 

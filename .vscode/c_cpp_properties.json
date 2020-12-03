@@ -5,7 +5,7 @@
             "includePath": [
                 "C:/raylib/raylib/src/**",
                 "${workspaceFolder}/**",
-                "C:/cpp_Libs/boost_1_73_0"
+                "C:/cpp_Libs/boost_1_73_0/**"
             ],
             "defines": [
                 "_DEBUG",
@@ -24,7 +24,7 @@
             "includePath": [
                 "<path_to_raylib>/src/**",
                 "${workspaceFolder}/**",
-                "C:/cpp_Libs/boost_1_73_0"
+                "C:/cpp_Libs/boost_1_73_0/**"
             ],
             "defines": [
                 "_DEBUG",
@@ -46,7 +46,7 @@
             "includePath": [
                 "<path_to_raylib>/src/**",
                 "${workspaceFolder}/**",
-                "C:/cpp_Libs/boost_1_73_0"
+                "C:/cpp_Libs/boost_1_73_0/**"
             ],
             "defines": [
                 "_DEBUG",
