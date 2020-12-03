@@ -6,11 +6,11 @@
 	],
 	"settings": {
 		"files.associations": {
-			"raylib.h": "c",
-			"math.h": "c",
-			"blocks.h": "c",
-			"stdio.h": "c",
-			"*.m": "c"
+			"raylib.h": "cpp",
+			"math.h": "cpp",
+			"blocks.h": "cpp",
+			"stdio.h": "cpp",
+			"*.m": "cpp"
 		}
 	}
 }

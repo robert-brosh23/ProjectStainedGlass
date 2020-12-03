@@ -4,7 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "C:/raylib/raylib/src/**",
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "C:/cpp_Libs/boost_1_73_0"
             ],
             "defines": [
                 "_DEBUG",
@@ -22,7 +23,8 @@
             "name": "Mac",
             "includePath": [
                 "<path_to_raylib>/src/**",
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "C:/cpp_Libs/boost_1_73_0"
             ],
             "defines": [
                 "_DEBUG",
@@ -43,7 +45,8 @@
             "name": "Linux",
             "includePath": [
                 "<path_to_raylib>/src/**",
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "C:/cpp_Libs/boost_1_73_0"
             ],
             "defines": [
                 "_DEBUG",
