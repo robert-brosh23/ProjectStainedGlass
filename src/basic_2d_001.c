@@ -24,7 +24,7 @@
 #include "raylib.h"
 #include "basic_2d.h"
 
-int dsd() 
+int main() 
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -46,10 +46,15 @@ int dsd()
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
+    location starting_loc;
+    location current_loc;
+    current_loc.x = 200;
+    current_loc.y = 200;
+    current_loc.speed = 20;
+    current_loc.dir = convert_deg_to_rad(80);
+    starting_loc = current_loc;
     int frame_count = 0;
-    int current_x_pos = 0;
-    int current_y_pos = 0;
-    int overlap = 0;
+    //int overlap = 0;
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
@@ -57,16 +62,10 @@ int dsd()
         //----------------------------------------------------------------------------------
         //UpdateCamera(&camera);
         //----------------------------------------------------------------------------------
-        if(current_y_pos == 100){
-            overlap = 1;
-        }
-        if(overlap == 0){
-            current_x_pos = current_x_pos + 1;
-            current_y_pos = current_y_pos + 1;
-        }
-        if(overlap == 1){
-            current_x_pos = current_x_pos + 1;
-            current_y_pos = current_y_pos - 1;
+
+        if(frame_count%2==0){
+            //Update line location
+            current_loc = update_location(current_loc);
         }
         // Draw
         //----------------------------------------------------------------------------------
@@ -78,7 +77,7 @@ int dsd()
 
                 DrawRectangle(100, 100, 300, 300, BLUE);
                 
-                DrawLineEx((Vector2){ 0, 0 }, (Vector2){ current_x_pos, current_y_pos }, 3, RED);
+                DrawLineEx((Vector2){ starting_loc.x, starting_loc.y }, (Vector2){ current_loc.x, current_loc.y }, 3, RED);
                 
                 //DrawCubeWires(cubePosition, 2.0f, 2.0f, 2.0f, MAROON);
                 //DrawGrid(10, 1.0f);
@@ -87,9 +86,10 @@ int dsd()
             
             DrawText("This is a raylib asdfdsf", 10, 40, 20, DARKGRAY);
             char str[10];
-            sprintf(str, "%i", overlap);
+            float v_x = cos((float)current_loc.dir)*(float)current_loc.speed;
+            sprintf(str, "%f", v_x);
             char to_print[100];
-            strcpy(to_print, "Overlap: ");
+            strcpy(to_print, "Velocity_x: ");
             strcat(to_print, str);
             DrawText(to_print, 10, 400, 20, DARKGRAY);
             DrawFPS(10, 10);
