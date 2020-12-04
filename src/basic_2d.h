@@ -11,17 +11,25 @@ struct location{
 
 // The defining points of a body
 struct body_coords{
+    int num_points;
     Vector2 points[MAX_EDGES+1];
 }typedef body_coords;
 
-// 
+// Collision characteristics including edges and edge angles
 struct collision_body{
-    float edge_dir[MAX_EDGES];
+    //Vector normal to edge
+    int num_edges;
+    float edge_angle[MAX_EDGES];
     Vector2 edge_start[MAX_EDGES];
     Vector2 edge_end[MAX_EDGES];
 }typedef collision_body;
 
-location update_location(location loc);
-bool check_for_collision(location loc);
+void print_text(char* text, float num_to_print, int x, int y, int font_size);
+
+location update_location(location loc, body_coords body);
+int check_for_collision(location loc, body_coords coords);
 float convert_deg_to_rad(float deg);
+bool faces_right(location loc);
+bool faces_up(location loc);
 collision_body assign_col_parameters(body_coords points);
+float calculate_collision_dir(location loc, collision_body col);
