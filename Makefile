@@ -147,7 +147,7 @@ EXAMPLE_RUNTIME_PATH   ?= $(RAYLIB_RELEASE_PATH)
 
 # Define default C compiler: gcc
 # NOTE: define g++ compiler if using C++
-CC = gcc
+CC = g++
 
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),OSX)
@@ -163,7 +163,7 @@ ifeq ($(PLATFORM),PLATFORM_RPI)
     ifeq ($(USE_RPI_CROSS_COMPILER),TRUE)
         # Define RPI cross-compiler
         #CC = armv6j-hardfloat-linux-gnueabi-gcc
-        CC = $(RPI_TOOLCHAIN)/bin/arm-linux-gnueabihf-gcc
+        CC = $(RPI_TOOLCHAIN)/bin/arm-linux-gnueabihf-g++
     endif
 endif
 ifeq ($(PLATFORM),PLATFORM_WEB)
