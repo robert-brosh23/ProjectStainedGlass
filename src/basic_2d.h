@@ -41,4 +41,4 @@ bool faces_right(location loc);
 bool faces_up(location loc);
 collision_body assign_col_parameters(body_coords points);
 float calculate_collision_dir(location loc, collision_body col, int collision_edge);
-void draw_line_series()
+void draw_line_series();
