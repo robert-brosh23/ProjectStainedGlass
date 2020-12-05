@@ -355,8 +355,8 @@ OBJ_DIR = obj
 SOURCE_FILES = src/*
 
 # Define all object files from source files
-SRC = $(call rwildcard, *.c, *.h)
-OBJS += $(patsubst %.c, %.o, $(SOURCE_FILES))
+SRC = $(call rwildcard, *.cpp, *.h)
+OBJS += $(patsubst %.cpp, %.o, $(SOURCE_FILES))
 
 # For Android platform we call a custom Makefile.Android
 ifeq ($(PLATFORM),PLATFORM_ANDROID)
@@ -379,7 +379,7 @@ $(PROJECT_NAME): $(OBJS)
 # Compile source files
 # NOTE: This pattern will compile every module defined on $(OBJS)
 #%.o: %.c
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM)
 
 # Clean everything
