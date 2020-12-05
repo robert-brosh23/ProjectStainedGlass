@@ -2,12 +2,20 @@
 #include "raylib.h"
 #define MAX_EDGES 5
 
+// location parameter including coords, speed, and direction
 struct location{
     int x;
     int y;
     int speed;
     float dir;
 }typedef location;
+
+struct line{
+    Vector2 start;
+    Vector2 end;
+    int thickness;
+    int color;
+};
 
 // The defining points of a body
 struct body_coords{
@@ -32,4 +40,5 @@ float convert_deg_to_rad(float deg);
 bool faces_right(location loc);
 bool faces_up(location loc);
 collision_body assign_col_parameters(body_coords points);
-float calculate_collision_dir(location loc, collision_body col);
+float calculate_collision_dir(location loc, collision_body col, int collision_edge);
+void draw_line_series()

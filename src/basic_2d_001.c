@@ -32,7 +32,7 @@ int main()
     current_loc.x = 400;
     current_loc.y = 0;
     current_loc.speed = 10;
-    current_loc.dir = convert_deg_to_rad(85);
+    current_loc.dir = convert_deg_to_rad(50);
     starting_loc = current_loc;
     int frame_count = 0;
     body_coords rectangle;
@@ -74,8 +74,8 @@ int main()
             BeginMode2D(camera);
 
                 DrawRectangle(rectangle.points[0].x, rectangle.points[0].y, 
-                rectangle.points[2].x-rectangle.points[0].x, 
-                rectangle.points[2].y-rectangle.points[0].y, BLUE);
+                    rectangle.points[2].x-rectangle.points[0].x, 
+                    rectangle.points[2].y-rectangle.points[0].y, BLUE);
                 
                 DrawLineEx((Vector2){ starting_loc.x, starting_loc.y }, 
                     (Vector2){ current_loc.x, current_loc.y }, 3, RED);
@@ -87,7 +87,7 @@ int main()
             
             //DrawText("This is a raylib asdfdsf", 10, 40, 20, DARKGRAY);
             print_text("Collision: ", col_res, 10, 400, 20);
-            print_text("Dir: ",cos((float)current_loc.dir)*(float)current_loc.speed, 10, 340,20);
+            print_text("Dir: ",current_loc.dir, 10, 340,20);
             print_text("X: ",current_loc.x, 10, 360,20);
 
             /*

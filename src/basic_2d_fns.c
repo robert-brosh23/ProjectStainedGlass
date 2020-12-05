@@ -24,16 +24,23 @@ void print_text(char* text, float num_to_print, int x, int y, int font_size){
 
 location update_location(location old_loc, body_coords body){
     location new_loc;
-    //if(check_for_collision(old_loc, body)){
+    collision_body col = assign_col_parameters(body);
+    print_text("edge 3: ", col.edge_angle[3],400,300, 20);
+    int edge_col = check_for_collision(old_loc, body);
+    if(edge_col != -1){
         //Collision reaction
-    //}
-    //else{
-        //Just keep going
-        new_loc.x = round((float)old_loc.x + cos((float)old_loc.dir)*(float)old_loc.speed);
-        new_loc.y = round((float)old_loc.y + sin((float)old_loc.dir)*(float)old_loc.speed);
-        new_loc.speed = old_loc.speed;
-        new_loc.dir = old_loc.dir;
-    //}
+        float new_dir = calculate_collision_dir(old_loc, col, edge_col);
+        new_loc.dir = new_dir;
+        //Save this line and print it in all future frames
+        //Create a new line with same speed and location as old on
+        //This one has the new direction
+    }
+    else new_loc.dir = old_loc.dir;
+    //Just keep going
+    new_loc.x = round((float)old_loc.x + cos((float)new_loc.dir)*(float)old_loc.speed);
+    new_loc.y = round((float)old_loc.y + sin((float)new_loc.dir)*(float)old_loc.speed);
+    new_loc.speed = old_loc.speed;
+    
 
     return(new_loc);
 }
@@ -75,33 +82,32 @@ int check_for_collision(location loc, body_coords body){
     int del_x;
     int del_y;
     if(loc.x > left_edge_cord && loc.x < right_edge_cord && loc.y > top_edge_cord && loc.y < bot_edge_cord){
-        print_text("In loop!", 0, 600, 90, 20);
         if(!faces_right(loc) && faces_up(loc)){ //Either right or bottom
             del_x = loc.x - right_edge_cord;
             del_y = loc.y - bot_edge_cord;
             if(abs(del_x)<abs(del_y))//closer to right edge if true
-                return 0;
+                return 2;
             else return 1;
         }
         if(!faces_right(loc) && !faces_up(loc)){ //Either right or top
             del_x = loc.x - right_edge_cord;
             del_y = loc.y - top_edge_cord;
             if(abs(del_x)<abs(del_y))//closer to right edge if true
-                return 0;
+                return 2;
             else return 3;
         }
         if(faces_right(loc) && faces_up(loc)){ //Either left or bottom edge
             del_x = loc.x - left_edge_cord;
             del_y = loc.y - bot_edge_cord;
             if(abs(del_x)<abs(del_y))//closer to left edge
-                return 2;
+                return 0;
             else return 1;
         }
         if(faces_right(loc) && !faces_up(loc)){ //Either left or top edge
             del_x = loc.x - left_edge_cord;
             del_y = loc.y - top_edge_cord;
             if(abs(del_x)<abs(del_y))//closer to left edge
-                return 2;
+                return 0;
             else return 3;
         }
     }
@@ -145,4 +151,10 @@ collision_body assign_col_parameters(body_coords coords){
         //body.edge_norm[i] = (float)90+edge_angle;
     }
     return body;
+}
+
+float calculate_collision_dir(location loc, collision_body col, int collision_edge){
+    float new_dir;
+    new_dir = 2 * (col.edge_angle[collision_edge] - loc.dir) + loc.dir;
+    return new_dir;
 }
