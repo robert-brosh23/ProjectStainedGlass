@@ -14,8 +14,8 @@ struct line{
     Vector2 start;
     Vector2 end;
     int thickness;
-    int color;
-};
+    Color color;
+}typedef line;
 
 // The defining points of a body
 struct body_coords{
@@ -32,13 +32,20 @@ struct collision_body{
     Vector2 edge_end[MAX_EDGES];
 }typedef collision_body;
 
+//Which collision body and which edge
+struct collision_return{
+    int body;
+    int edge;
+}typedef collision_return;
+
 void print_text(char* text, float num_to_print, int x, int y, int font_size);
 
-location update_location(location loc, body_coords body);
-int check_for_collision(location loc, body_coords coords);
+location update_location(location loc, collision_return col_ret, collision_body hitbox);
+collision_return check_for_collision(location loc, body_coords* bodies, int num_bodies);
 float convert_deg_to_rad(float deg);
 bool faces_right(location loc);
 bool faces_up(location loc);
 collision_body assign_col_parameters(body_coords points);
 float calculate_collision_dir(location loc, collision_body col, int collision_edge);
-void draw_line_series();
+void draw_line_series(line* lines, int num_lines);
+void draw_rectangles(body_coords* bodies, int num_bodies);
