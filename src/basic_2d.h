@@ -20,7 +20,7 @@ struct line{
 // The defining points of a body
 struct body_coords{
     int num_points;
-    Vector2 points[MAX_EDGES+1];
+    Vector2 points[MAX_EDGES];
 }typedef body_coords;
 
 // Collision characteristics including edges and edge angles

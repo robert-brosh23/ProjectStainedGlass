@@ -147,7 +147,7 @@ EXAMPLE_RUNTIME_PATH   ?= $(RAYLIB_RELEASE_PATH)
 
 # Define default C compiler: gcc
 # NOTE: define g++ compiler if using C++
-CC = gcc
+CC = g++
 
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),OSX)
@@ -163,7 +163,7 @@ ifeq ($(PLATFORM),PLATFORM_RPI)
     ifeq ($(USE_RPI_CROSS_COMPILER),TRUE)
         # Define RPI cross-compiler
         #CC = armv6j-hardfloat-linux-gnueabi-gcc
-        CC = $(RPI_TOOLCHAIN)/bin/arm-linux-gnueabihf-gcc
+        CC = $(RPI_TOOLCHAIN)/bin/arm-linux-gnueabihf-g++
     endif
 endif
 ifeq ($(PLATFORM),PLATFORM_WEB)
@@ -355,8 +355,8 @@ OBJ_DIR = obj
 SOURCE_FILES = src/*
 
 # Define all object files from source files
-SRC = $(call rwildcard, *.c, *.h)
-OBJS += $(patsubst %.c, %.o, $(SOURCE_FILES))
+SRC = $(call rwildcard, *.cpp, *.h)
+OBJS += $(patsubst %.cpp, %.o, $(SOURCE_FILES))
 
 # For Android platform we call a custom Makefile.Android
 ifeq ($(PLATFORM),PLATFORM_ANDROID)
@@ -379,7 +379,7 @@ $(PROJECT_NAME): $(OBJS)
 # Compile source files
 # NOTE: This pattern will compile every module defined on $(OBJS)
 #%.o: %.c
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CC) -c $< -o $@ $(CFLAGS) $(INCLUDE_PATHS) -D$(PLATFORM)
 
 # Clean everything
