@@ -21,7 +21,7 @@ void print_text(char* text, float num_to_print, int x, int y, int font_size){
     char to_print[100];
     strcpy(to_print, text);
     strcat(to_print, str);
-    DrawText(to_print, x, y, 20, DARKGRAY);
+    DrawText(to_print, x, y, font_size, DARKGRAY);
 }
 
 location update_location(location old_loc, collision_return col_ret, collision_body hitbox){
@@ -29,7 +29,9 @@ location update_location(location old_loc, collision_return col_ret, collision_b
 
     if(col_ret.edge != -1){ //Add another line
         //Collision reaction
-        new_loc.dir = calculate_collision_dir(old_loc, hitbox, col_ret.edge);
+        int i = col_ret.edge;
+        print_text("edge angle collided: ", hitbox.edge_angle[i], 500, 380, 20);
+        new_loc.dir = calculate_collision_dir(old_loc, hitbox, i);
     }
     else new_loc.dir = old_loc.dir;
     //Calculate new location using equation x = x_0 + v_x*dt
@@ -78,7 +80,6 @@ collision_return check_for_collision(location loc, body_coords* bodies, int num_
             }
         }
     }
-    print_text("Body colided: ", col_ret.body, 500, 400, 20);
     
     /*
     print_text("Right: ", right_edge_cord, 600, 10, 20);
@@ -92,40 +93,47 @@ collision_return check_for_collision(location loc, body_coords* bodies, int num_
 
     //ADD [i] to all right left down and top coords
     //ADD return col_ret.body = i to all IF statements
-    
-    if(loc.x > left_edge_cord && loc.x < right_edge_cord && loc.y > top_edge_cord && loc.y < bot_edge_cord){
-        if(!faces_right(loc) && faces_up(loc)){ //Either right or bottom
-            del_x = loc.x - right_edge_cord;
-            del_y = loc.y - bot_edge_cord;
-            //closer to right edge if true
-            if(abs(del_x)<abs(del_y)){
-                col_ret.edge = 2;
+    for(i = 0; i < num_bodies; i++){
+        //This if statement checks if current location lies inside of a collision box
+        if(loc.x > left_edge_cord[i] && loc.x < right_edge_cord[i] && loc.y > top_edge_cord[i] && loc.y < bot_edge_cord[i]){
+            if(!faces_right(loc) && faces_up(loc)){ //Either right or bottom
+                del_x = loc.x - right_edge_cord[i];
+                del_y = loc.y - bot_edge_cord[i];
+                //closer to right edge if true
+                if(abs(del_x)<abs(del_y)){
+                    col_ret.edge = 2;
+                }
+                else col_ret.edge = 1;
+                //Assign the body that loc collided with
+                col_ret.body = i;
             }
-            else col_ret.edge = 1;
-            //HERE add col_ret.body = i;
-        }
-        if(!faces_right(loc) && !faces_up(loc)){ //Either right or top
-            del_x = loc.x - right_edge_cord;
-            del_y = loc.y - top_edge_cord;
-            if(abs(del_x)<abs(del_y))//closer to right edge if true
-                col_ret.edge = 2;
-            else col_ret.edge = 3;
-        }
-        if(faces_right(loc) && faces_up(loc)){ //Either left or bottom edge
-            del_x = loc.x - left_edge_cord;
-            del_y = loc.y - bot_edge_cord;
-            if(abs(del_x)<abs(del_y))//closer to left edge
-                col_ret.edge = 0;
-            else col_ret.edge = 1;
-        }
-        if(faces_right(loc) && !faces_up(loc)){ //Either left or top edge
-            del_x = loc.x - left_edge_cord;
-            del_y = loc.y - top_edge_cord;
-            if(abs(del_x)<abs(del_y))//closer to left edge
-                col_ret.edge = 0;
-            else col_ret.edge = 3;
+            if(!faces_right(loc) && !faces_up(loc)){ //Either right or top
+                del_x = loc.x - right_edge_cord[i];
+                del_y = loc.y - top_edge_cord[i];
+                if(abs(del_x)<abs(del_y))//closer to right edge if true
+                    col_ret.edge = 2;
+                else col_ret.edge = 3;
+                col_ret.body = i;
+            }
+            if(faces_right(loc) && faces_up(loc)){ //Either left or bottom edge
+                del_x = loc.x - left_edge_cord[i];
+                del_y = loc.y - bot_edge_cord[i];
+                if(abs(del_x)<abs(del_y))//closer to left edge
+                    col_ret.edge = 0;
+                else col_ret.edge = 1;
+                col_ret.body = i;
+            }
+            if(faces_right(loc) && !faces_up(loc)){ //Either left or top edge
+                del_x = loc.x - left_edge_cord[i];
+                del_y = loc.y - top_edge_cord[i];
+                if(abs(del_x)<abs(del_y))//closer to left edge
+                    col_ret.edge = 0;
+                else col_ret.edge = 3;
+                col_ret.body = i;
+            }
         }
     }
+    print_text("Body colided: ", col_ret.body, 500, 400, 20);
     print_text("edge colided: ", col_ret.edge, 500, 420, 20);
     return col_ret;
 }
@@ -151,9 +159,10 @@ bool faces_up(location loc){
 collision_body assign_col_parameters(body_coords coords){
     int i = 0;
     collision_body body;
-    body.num_edges = coords.num_points-1;
+    //number of edges is number of points
+    body.num_edges = coords.num_points;
     //Assign edges
-    for(i = 0; i<coords.num_points; i++){
+    for(i = 0; i<(body.num_edges-2); i++){
         body.edge_start[i] = coords.points[i];
         body.edge_end[i] = coords.points[i+1];
     }
@@ -162,8 +171,18 @@ collision_body assign_col_parameters(body_coords coords){
     //Assign edge norms
     //float edge_angle;
     for(i = 0; i<body.num_edges; i++){
-        body.edge_angle[i] = atan((float)(body.edge_end[i].y-body.edge_start[i].y)/
-                                (float)(body.edge_end[i].x-body.edge_start[i].x));
+        if(body.edge_end[i].x == body.edge_start[i].x){
+            //Accounts for vertical lines
+            body.edge_angle[i] = PI/2;
+        }
+        else{
+            body.edge_angle[i] = atan((float)(body.edge_end[i].y-body.edge_start[i].y)/
+                                    (float)(body.edge_end[i].x-body.edge_start[i].x));
+        }
+        //Check for angles out of bounds
+        //i.e, and angle of 100 / should look like an angle of -80 / .
+        while(body.edge_angle[i] > (PI/2 + .01)) body.edge_angle[i] = body.edge_angle[i] - PI/2;
+        while(body.edge_angle[i] < (-PI/2 - .01)) body.edge_angle[i] = body.edge_angle[i] + PI/2;
         //body.edge_norm[i] = (float)90+edge_angle;
     }
     return body;
@@ -172,6 +191,9 @@ collision_body assign_col_parameters(body_coords coords){
 float calculate_collision_dir(location loc, collision_body col, int collision_edge){
     float new_dir;
     new_dir = 2 * (col.edge_angle[collision_edge] - loc.dir) + loc.dir;
+    //Correct for angles outside of range
+    //while(new_dir > PI) new_dir = new_dir - PI/2;
+    //while(new_dir < -PI) new_dir = new_dir + PI/2;
     return new_dir;
 }
 
@@ -190,5 +212,4 @@ void draw_rectangles(body_coords* bodies, int num_bodies){
             bodies[i].points[2].x-bodies[i].points[0].x, 
             bodies[i].points[2].y-bodies[i].points[0].y, BLUE);
     }
-
 }

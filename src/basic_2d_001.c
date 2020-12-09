@@ -10,8 +10,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    const int screenWidth = 1600;
+    const int screenHeight = 900;
 
     InitWindow(screenWidth, screenHeight, "raylib");
 
@@ -30,19 +30,19 @@ int main()
     //--------------------------------------------------------------------------------------
     location starting_loc;
     location current_loc;
-    current_loc.x = 200;
+    current_loc.x = 160;
     current_loc.y = 0;
     current_loc.speed = 10;
-    current_loc.dir = convert_deg_to_rad(80);
+    current_loc.dir = convert_deg_to_rad(30);
     starting_loc = current_loc;
     int frame_count = 0;
     body_coords all_bodies[2];
     body_coords rectangle;
     rectangle.num_points=4;
-    rectangle.points[0] = (Vector2){200, 100};
+    rectangle.points[0] = (Vector2){200, 250};
     rectangle.points[1] = (Vector2){200, 300};
     rectangle.points[2] = (Vector2){500, 300};
-    rectangle.points[3] = (Vector2){500, 100};
+    rectangle.points[3] = (Vector2){500, 250};
     all_bodies[0] = rectangle;
     
     body_coords rectangle2;
@@ -60,7 +60,7 @@ int main()
         hitboxes[x] = assign_col_parameters(all_bodies[x]);
     }
 
-    int col_res = -1;
+    //int col_res = -1;
     line *lines;
     int num_lines=1;
     lines = (line *)malloc(sizeof(line));
@@ -128,10 +128,10 @@ int main()
             EndMode2D();
             
             //DrawText("This is a raylib asdfdsf", 10, 40, 20, DARKGRAY);
-            print_text("Collision: ", col_res, 10, 400, 20);
+            //("Collision: ", col_res, 10, 400, 20);
             print_text("Dir: ",current_loc.dir, 10, 340,20);
             print_text("X: ",current_loc.x, 10, 360,20);
-            print_text("Num lines: ", num_lines, 10, 380, 20);
+            print_text("hitbox[1]angle: ", hitboxes[1].edge_angle[0], 10, 380, 20);
 
             /*
             char str[100];
