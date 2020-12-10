@@ -38,8 +38,10 @@ struct collision_return{
     int edge;
 }typedef collision_return;
 
+//Debugging functions
 void print_text(char* text, float num_to_print, int x, int y, int font_size);
 
+//Core functions
 location update_location(location loc, collision_return col_ret, collision_body hitbox);
 collision_return check_for_collision(location loc, body_coords* bodies, int num_bodies);
 float convert_deg_to_rad(float deg);
@@ -47,5 +49,9 @@ bool faces_right(location loc);
 bool faces_up(location loc);
 collision_body assign_col_parameters(body_coords points);
 float calculate_collision_dir(location loc, collision_body col, int collision_edge);
+line rotate_user_line(line user_line, int key_pressed);
+
+//Drawing functions
 void draw_line_series(line* lines, int num_lines);
 void draw_rectangles(body_coords* bodies, int num_bodies);
+void draw_user_features();

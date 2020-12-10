@@ -213,3 +213,7 @@ void draw_rectangles(body_coords* bodies, int num_bodies){
             bodies[i].points[2].y-bodies[i].points[0].y, BLUE);
     }
 }
+
+void draw_user_features(int dir){
+    print_text("Press space to start",0,200, 20, 40);
+}

@@ -10,8 +10,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 1600;
-    const int screenHeight = 900;
+    const int screenWidth = 800;
+    const int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib");
 
@@ -19,7 +19,7 @@ int main()
     camera.offset = (Vector2){ 0.0f, 0.0f };
     camera.target = (Vector2){ 0.0, 0.0 };
     camera.rotation = 0;
-    camera.zoom = 1;
+    camera.zoom = .5;
     //camera.type = CAMERA_PERSPECTIVE;
     
     //SetCameraMode(camera, CAMERA_ORBITAL);
@@ -72,6 +72,14 @@ int main()
     // Main game loop
     bool pause = 0;
     int i;
+    int user_input = 1;
+    line user_line;
+    int user_line_length = 400;
+    user_line.start = (Vector2){screenWidth/2 * (1/camera.zoom), screenHeight * (1/camera.zoom)};
+    user_line.end = (Vector2){user_line.start.x, user_line.start.y - user_line_length};
+    user_line.color = RED;
+    user_line.thickness = 10;
+
 
     collision_return col_ret;
     while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -80,38 +88,41 @@ int main()
         //----------------------------------------------------------------------------------
         //UpdateCamera(&camera);
         //----------------------------------------------------------------------------------
-        if(IsKeyPressed(KEY_SPACE)){
-            pause = !pause;
+
+        if(user_input == 1){
+            //We are waiting for the user input
+            if(IsKeyPressed(KEY_SPACE)){
+                user_input = 0;
+            }
         }
-        
+        else if(frame_count%1==0 && !pause){
+            //Check for collision
+            col_ret = check_for_collision(current_loc, all_bodies, num_bodies);
+            if(col_ret.edge != -1){//This means a collision has occured
+                //Make new line
+                num_lines = num_lines + 1;
+                //Endpoint of the last line is current_loc
+                lines[num_lines-2].end = (Vector2){current_loc.x, current_loc.y};
+                //Reallocate to add space for another line
+                lines = (line *)realloc(lines, sizeof(line)*(num_lines));
+                //startpoint of new line is also current_loc
+                lines[num_lines-1].start = (Vector2){current_loc.x, current_loc.y};
+            }
+            //Update line location
+            current_loc = update_location(current_loc, col_ret, hitboxes[col_ret.body]);
+            lines[num_lines-1].end = (Vector2){current_loc.x, current_loc.y};
+            
+            for(i = 0; i < num_lines; i++){
+                lines[i].color = RED;
+                lines[i].thickness = 10;
+            }
+        }
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
 
             ClearBackground(RAYWHITE);
-
-            if(frame_count%1==0 && !pause){
-                //Check for collision
-                col_ret = check_for_collision(current_loc, all_bodies, num_bodies);
-                if(col_ret.edge != -1){
-                    //Make new line
-                    num_lines = num_lines + 1;
-                    //Endpoint of the last line is current_loc
-                    lines[num_lines-2].end = (Vector2){current_loc.x, current_loc.y};
-                    //Reallocate to add space for another line
-                    lines = (line *)realloc(lines, sizeof(line)*(num_lines));
-                    //startpoint of new line is also current_loc
-                    lines[num_lines-1].start = (Vector2){current_loc.x, current_loc.y};
-                }
-                //Update line location
-                current_loc = update_location(current_loc, col_ret, hitboxes[col_ret.body]);
-                lines[num_lines-1].end = (Vector2){current_loc.x, current_loc.y};
-                
-                for(i = 0; i < num_lines; i++){
-                    lines[i].color = RED;
-                    lines[i].thickness = 3;
-                }
-            }
+            
 
             BeginMode2D(camera);
 
@@ -121,6 +132,11 @@ int main()
                 draw_rectangles(all_bodies, num_bodies);
                 
                 draw_line_series(lines, num_lines);
+
+                if(user_input==1){
+                    draw_user_features();
+                    draw_line_series(&user_line, 1);
+                }
                 
                 //DrawCubeWires(cubePosition, 2.0f, 2.0f, 2.0f, MAROON);
                 //DrawGrid(10, 1.0f);
