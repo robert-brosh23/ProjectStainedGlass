@@ -47,9 +47,10 @@ collision_return check_for_collision(location loc, body_coords* bodies, int num_
 float convert_deg_to_rad(float deg);
 bool faces_right(location loc);
 bool faces_up(location loc);
+body_coords create_rectangle(int x_upper, int x_lower, int y_upper, int y_lower);
 collision_body assign_col_parameters(body_coords points);
 float calculate_collision_dir(location loc, collision_body col, int collision_edge);
-line rotate_user_line(line user_line, int key_pressed);
+line rotate_user_line(line user_line, float user_dir, int user_line_length);
 
 //Drawing functions
 void draw_line_series(line* lines, int num_lines);

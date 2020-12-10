@@ -36,26 +36,23 @@ int main()
     current_loc.dir = convert_deg_to_rad(30);
     starting_loc = current_loc;
     int frame_count = 0;
-    body_coords all_bodies[2];
+    int num_bodies = 5;
+    body_coords all_bodies[num_bodies];
     body_coords rectangle;
-    rectangle.num_points=4;
-    rectangle.points[0] = (Vector2){200, 250};
-    rectangle.points[1] = (Vector2){200, 300};
-    rectangle.points[2] = (Vector2){500, 300};
-    rectangle.points[3] = (Vector2){500, 250};
+    rectangle = create_rectangle(500,200,300,250);
     all_bodies[0] = rectangle;
     
     body_coords rectangle2;
-    rectangle2.num_points=4;
-    rectangle2.points[0] = (Vector2){500, 0};
-    rectangle2.points[1] = (Vector2){500, 300};
-    rectangle2.points[2] = (Vector2){600, 300};
-    rectangle2.points[3] = (Vector2){600, 0};
+    rectangle2 = create_rectangle(600, 500, 300, 0);
     all_bodies[1] = rectangle2;
 
-    int num_bodies = 2;
+    all_bodies[2] = create_rectangle(100, 0, 900, 700);
+    all_bodies[3] = create_rectangle(1600, 0, 100, 0);
+    all_bodies[4] = create_rectangle(100, 0, 800, 10);
 
-    collision_body hitboxes[2];
+    
+
+    collision_body hitboxes[num_bodies];
     for(int x = 0; x < num_bodies; x++){
         hitboxes[x] = assign_col_parameters(all_bodies[x]);
     }
@@ -79,7 +76,7 @@ int main()
     user_line.end = (Vector2){user_line.start.x, user_line.start.y - user_line_length};
     user_line.color = RED;
     user_line.thickness = 10;
-
+    float user_dir = -PI/2;
 
     collision_return col_ret;
     while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -91,10 +88,22 @@ int main()
 
         if(user_input == 1){
             //We are waiting for the user input
+            current_loc.dir = user_dir;
             if(IsKeyPressed(KEY_SPACE)){
                 user_input = 0;
+                lines[0].start = user_line.start;
+                current_loc.x = lines[0].start.x;
+                current_loc.y = lines[0].start.y;
             }
+            if(IsKeyDown(KEY_LEFT)){
+                user_dir = user_dir - .01;
+            }
+            if(IsKeyDown(KEY_RIGHT)){
+                user_dir = user_dir + .01;
+            }
+            user_line = rotate_user_line(user_line, user_dir, user_line_length);
         }
+        else if(IsKeyPressed(KEY_Q)) pause = !pause;
         else if(frame_count%1==0 && !pause){
             //Check for collision
             col_ret = check_for_collision(current_loc, all_bodies, num_bodies);
@@ -147,7 +156,10 @@ int main()
             //("Collision: ", col_res, 10, 400, 20);
             print_text("Dir: ",current_loc.dir, 10, 340,20);
             print_text("X: ",current_loc.x, 10, 360,20);
-            print_text("hitbox[1]angle: ", hitboxes[1].edge_angle[0], 10, 380, 20);
+            //print_text("hitbox[1]angle: ", hitboxes[1].edge_angle[0], 10, 380, 20);
+            //print_text("user start x: ",user_line.start.x, 500,380,20);
+            ;;print_text("user end x: ",user_line.end.x, 500,400,20);
+            print_text("edge angle: ", hitboxes[4].edge_angle[2], 500, 200, 20);
 
             /*
             char str[100];

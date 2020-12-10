@@ -133,18 +133,20 @@ collision_return check_for_collision(location loc, body_coords* bodies, int num_
             }
         }
     }
-    print_text("Body colided: ", col_ret.body, 500, 400, 20);
-    print_text("edge colided: ", col_ret.edge, 500, 420, 20);
+    //print_text("Body colided: ", col_ret.body, 500, 300, 30);
+    //print_text("edge colided: ", col_ret.edge, 500, 320, 30);
     return col_ret;
 }
 
 float convert_deg_to_rad(float deg){
+    //convert from degrees to radians
     return ((deg * PI)/180);
 }
 
 //Return 1 for right
 //Return 0 for else
 bool faces_right(location loc){
+    //Checking if direction lies on right side of unit circle
     if(loc.dir>(-PI/2) && loc.dir<(PI/2)) return 1;
     else return 0;
 }
@@ -154,6 +156,16 @@ bool faces_right(location loc){
 bool faces_up(location loc){
     if(loc.dir<0) return 1;
     else return 0;
+}
+
+body_coords create_rectangle(int x_upper, int x_lower, int y_upper, int y_lower){
+    body_coords rectangle;
+    rectangle.num_points = 4;
+    rectangle.points[0] = (Vector2){x_lower, y_lower};
+    rectangle.points[1] = (Vector2){x_lower, y_upper};
+    rectangle.points[2] = (Vector2){x_upper, y_upper};
+    rectangle.points[3] = (Vector2){x_upper, y_lower};
+    return rectangle;
 }
 
 collision_body assign_col_parameters(body_coords coords){
@@ -197,6 +209,22 @@ float calculate_collision_dir(location loc, collision_body col, int collision_ed
     return new_dir;
 }
 
+line rotate_user_line(line user_line, float user_dir, int user_line_length){
+    line new_user_line;
+    //Always keep line start at the same place
+    new_user_line.start = user_line.start;
+    //Rotate line ending
+    new_user_line.end = (Vector2){user_line.start.x + cos(user_dir) * user_line_length,
+                        user_line.start.y + sin(user_dir) * user_line_length};
+    //Line color and thickness stay the same
+    new_user_line.thickness = user_line.thickness;
+    new_user_line.color = user_line.color;
+    return new_user_line;
+
+}
+
+//Draw a series of line structs on the play area
+//Pass in a pointer to the beginning of lines and number of lines
 void draw_line_series(line* lines, int num_lines){
     int i = 0;
     for(i = 0; i<num_lines; i++){
@@ -205,6 +233,8 @@ void draw_line_series(line* lines, int num_lines){
     }
 }
 
+//Draw a series of rectangles on the play area
+//Pass in a point to the beginning of the rectangles and number of rectangles
 void draw_rectangles(body_coords* bodies, int num_bodies){
     int i = 0;
     for(i = 0; i < num_bodies; i++){
@@ -214,6 +244,7 @@ void draw_rectangles(body_coords* bodies, int num_bodies){
     }
 }
 
-void draw_user_features(int dir){
-    print_text("Press space to start",0,200, 20, 40);
+//This is what will show while the user is selecting their direction
+void draw_user_features(){
+    print_text("Press space to start", 0, 200, 20, 40);
 }
