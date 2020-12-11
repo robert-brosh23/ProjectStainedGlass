@@ -174,7 +174,7 @@ collision_body assign_col_parameters(body_coords coords){
     //number of edges is number of points
     body.num_edges = coords.num_points;
     //Assign edges
-    for(i = 0; i<(body.num_edges-2); i++){
+    for(i = 0; i<(body.num_edges-1); i++){
         body.edge_start[i] = coords.points[i];
         body.edge_end[i] = coords.points[i+1];
     }
@@ -183,7 +183,7 @@ collision_body assign_col_parameters(body_coords coords){
     //Assign edge norms
     //float edge_angle;
     for(i = 0; i<body.num_edges; i++){
-        if(body.edge_end[i].x == body.edge_start[i].x){
+        if(abs(body.edge_end[i].x - body.edge_start[i].x)<1){
             //Accounts for vertical lines
             body.edge_angle[i] = PI/2;
         }
@@ -244,7 +244,18 @@ void draw_rectangles(body_coords* bodies, int num_bodies){
     }
 }
 
+void draw_player(Vector2 current_loc){
+    DrawCircleV(current_loc, 10, MAROON);
+}
+
 //This is what will show while the user is selecting their direction
-void draw_user_features(){
-    print_text("Press space to start", 0, 200, 20, 40);
+void draw_game_state(int game_state, line* lines, int num_lines, body_coords* rectangles, int num_bodies){
+    if(game_state == 0){ //Title screen
+        print_text("Press space to start", 0, 200, 20, 40);
+    }
+    if(game_state == 1 || game_state == 2){ //Level 1
+        draw_rectangles(rectangles, num_bodies);
+
+        draw_line_series(lines, num_lines);
+    }
 }

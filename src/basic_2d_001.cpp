@@ -30,8 +30,6 @@ int main()
     //--------------------------------------------------------------------------------------
     location starting_loc;
     location current_loc;
-    current_loc.x = 160;
-    current_loc.y = 0;
     current_loc.speed = 10;
     current_loc.dir = convert_deg_to_rad(30);
     starting_loc = current_loc;
@@ -58,10 +56,7 @@ int main()
     }
 
     //int col_res = -1;
-    line *lines;
-    int num_lines=1;
-    lines = (line *)malloc(sizeof(line));
-    lines[0].start = (Vector2){starting_loc.x, starting_loc.y};
+
     
     //Assigning collision body only needs to be done once.
     //collision_body collision_rectangle = assign_col_parameters(rectangle);
@@ -78,6 +73,14 @@ int main()
     user_line.thickness = 10;
     float user_dir = -PI/2;
 
+    line *lines;
+    int num_lines=1;
+    lines = (line *)malloc(sizeof(line));
+    //lines[0].start = (Vector2){starting_loc.x, starting_loc.y};
+    lines[0] = user_line;
+    
+    int game_state = 0;
+
     collision_return col_ret;
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
@@ -85,12 +88,16 @@ int main()
         //----------------------------------------------------------------------------------
         //UpdateCamera(&camera);
         //----------------------------------------------------------------------------------
-
-        if(user_input == 1){
+        if(game_state == 0){
+            if(IsKeyPressed(KEY_SPACE)){
+                game_state = 1;
+            }
+        }
+        if(game_state == 1){
             //We are waiting for the user input
             current_loc.dir = user_dir;
-            if(IsKeyPressed(KEY_SPACE)){
-                user_input = 0;
+            if(IsKeyPressed(KEY_S)){
+                game_state = 2;
                 lines[0].start = user_line.start;
                 current_loc.x = lines[0].start.x;
                 current_loc.y = lines[0].start.y;
@@ -101,10 +108,10 @@ int main()
             if(IsKeyDown(KEY_RIGHT)){
                 user_dir = user_dir + .01;
             }
-            user_line = rotate_user_line(user_line, user_dir, user_line_length);
+            lines[0] = rotate_user_line(lines[0], user_dir, user_line_length);
         }
         else if(IsKeyPressed(KEY_Q)) pause = !pause;
-        else if(frame_count%1==0 && !pause){
+        else if(game_state == 2 && frame_count%1==0 && !pause){
             //Check for collision
             col_ret = check_for_collision(current_loc, all_bodies, num_bodies);
             if(col_ret.edge != -1){//This means a collision has occured
@@ -138,6 +145,7 @@ int main()
                 //DrawRectangle(rectangle.points[0].x, rectangle.points[0].y, 
                 //    rectangle.points[2].x-rectangle.points[0].x, 
                 //    rectangle.points[2].y-rectangle.points[0].y, BLUE);
+                /*
                 draw_rectangles(all_bodies, num_bodies);
                 
                 draw_line_series(lines, num_lines);
@@ -146,20 +154,20 @@ int main()
                     draw_user_features();
                     draw_line_series(&user_line, 1);
                 }
+                */
+               draw_game_state(game_state, lines, num_lines, all_bodies, num_bodies);
                 
-                //DrawCubeWires(cubePosition, 2.0f, 2.0f, 2.0f, MAROON);
-                //DrawGrid(10, 1.0f);
 
             EndMode2D();
-            
-            //DrawText("This is a raylib asdfdsf", 10, 40, 20, DARKGRAY);
+
             //("Collision: ", col_res, 10, 400, 20);
             print_text("Dir: ",current_loc.dir, 10, 340,20);
             print_text("X: ",current_loc.x, 10, 360,20);
             //print_text("hitbox[1]angle: ", hitboxes[1].edge_angle[0], 10, 380, 20);
             //print_text("user start x: ",user_line.start.x, 500,380,20);
-            ;;print_text("user end x: ",user_line.end.x, 500,400,20);
-            print_text("edge angle: ", hitboxes[4].edge_angle[2], 500, 200, 20);
+            //print_text("line0start ",lines[0].start.x, 500,400,20);
+            print_text("edge angle: ", hitboxes[4].edge_angle[2], 500, 220, 20);
+            print_text("Game state: ", game_state, 500,200,20);
 
             /*
             char str[100];
