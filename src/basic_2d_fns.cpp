@@ -235,12 +235,19 @@ void draw_line_series(line* lines, int num_lines){
 
 //Draw a series of rectangles on the play area
 //Pass in a point to the beginning of the rectangles and number of rectangles
-void draw_rectangles(body_coords* bodies, int num_bodies){
+void draw_rectangles(body_coords* bodies, int num_bodies, int num_body_goal){
     int i = 0;
     for(i = 0; i < num_bodies; i++){
-        DrawRectangle(bodies[i].points[0].x, bodies[i].points[0].y, 
-            bodies[i].points[2].x-bodies[i].points[0].x, 
-            bodies[i].points[2].y-bodies[i].points[0].y, BLUE);
+        if(i == num_body_goal){
+            DrawRectangle(bodies[i].points[0].x, bodies[i].points[0].y, 
+                bodies[i].points[2].x-bodies[i].points[0].x, 
+                bodies[i].points[2].y-bodies[i].points[0].y, MAROON);
+        }
+        else{
+            DrawRectangle(bodies[i].points[0].x, bodies[i].points[0].y, 
+                bodies[i].points[2].x-bodies[i].points[0].x, 
+                bodies[i].points[2].y-bodies[i].points[0].y, BLUE);
+        }
     }
 }
 
@@ -249,12 +256,12 @@ void draw_player(Vector2 current_loc){
 }
 
 //This is what will show while the user is selecting their direction
-void draw_game_state(int game_state, line* lines, int num_lines, body_coords* rectangles, int num_bodies){
+void draw_game_state(int game_state, line* lines, int num_lines, body_coords* rectangles, int num_bodies, int num_body_goal){
     if(game_state == 0){ //Title screen
         print_text("Press space to start", 0, 200, 20, 40);
     }
     if(game_state == 1 || game_state == 2){ //Level 1
-        draw_rectangles(rectangles, num_bodies);
+        draw_rectangles(rectangles, num_bodies, num_body_goal);
 
         draw_line_series(lines, num_lines);
     }

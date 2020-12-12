@@ -54,6 +54,6 @@ line rotate_user_line(line user_line, float user_dir, int user_line_length);
 
 //Drawing functions
 void draw_line_series(line* lines, int num_lines);
-void draw_rectangles(body_coords* bodies, int num_bodies);
+void draw_rectangles(body_coords* bodies, int num_bodies, int num_body_goal);
 void draw_player(Vector2 current_loc);
-void draw_game_state(int game_state, line* lines, int num_lines, body_coords* rectangles, int num_bodies);
+void draw_game_state(int game_state, line* lines, int num_lines, body_coords* rectangles, int num_bodies, int num_body_goal);

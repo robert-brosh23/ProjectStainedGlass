@@ -34,7 +34,7 @@ int main()
     current_loc.dir = convert_deg_to_rad(30);
     starting_loc = current_loc;
     int frame_count = 0;
-    int num_bodies = 5;
+    int num_bodies = 6;
     body_coords all_bodies[num_bodies];
     body_coords rectangle;
     rectangle = create_rectangle(500,200,300,250);
@@ -47,6 +47,8 @@ int main()
     all_bodies[2] = create_rectangle(100, 0, 900, 700);
     all_bodies[3] = create_rectangle(1600, 0, 100, 0);
     all_bodies[4] = create_rectangle(100, 0, 800, 10);
+    all_bodies[5] = create_rectangle(700, 600, 700, 600);
+    int num_body_goal = 5;
 
     
 
@@ -85,8 +87,6 @@ int main()
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
         // Update
-        //----------------------------------------------------------------------------------
-        //UpdateCamera(&camera);
         //----------------------------------------------------------------------------------
         if(game_state == 0){
             if(IsKeyPressed(KEY_SPACE)){
@@ -133,6 +133,14 @@ int main()
                 lines[i].thickness = 10;
             }
         }
+        if(IsKeyPressed(KEY_R)){ //Reset game
+            game_state = 0;
+            free(lines);
+            num_lines = 1;
+            lines = (line *)malloc(sizeof(line));
+            lines[0] = user_line;
+            user_dir = -PI/2;
+        }
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
@@ -155,7 +163,7 @@ int main()
                     draw_line_series(&user_line, 1);
                 }
                 */
-               draw_game_state(game_state, lines, num_lines, all_bodies, num_bodies);
+               draw_game_state(game_state, lines, num_lines, all_bodies, num_bodies, num_body_goal);
                 
 
             EndMode2D();
