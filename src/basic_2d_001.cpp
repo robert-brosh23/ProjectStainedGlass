@@ -20,11 +20,6 @@ int main()
     camera.target = (Vector2){ 0.0, 0.0 };
     camera.rotation = 0;
     camera.zoom = .5;
-    //camera.type = CAMERA_PERSPECTIVE;
-    
-    //SetCameraMode(camera, CAMERA_ORBITAL);
-
-    //Vector3 cubePosition = { 0.0f };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -35,19 +30,14 @@ int main()
     starting_loc = current_loc;
     int frame_count = 0;
     int num_bodies = 6;
-    body_coords all_bodies[num_bodies];
-    body_coords rectangle;
-    rectangle = create_rectangle(500,200,300,250);
-    all_bodies[0] = rectangle;
-    
-    body_coords rectangle2;
-    rectangle2 = create_rectangle(600, 500, 300, 0);
-    all_bodies[1] = rectangle2;
 
+    body_coords all_bodies[num_bodies];
+    all_bodies[0] = create_rectangle(500,200,300,250);
+    all_bodies[1] = create_rectangle(600, 500, 300, 0);
     all_bodies[2] = create_rectangle(100, 0, 900, 700);
     all_bodies[3] = create_rectangle(1600, 0, 100, 0);
-    all_bodies[4] = create_rectangle(100, 0, 800, 10);
-    all_bodies[5] = create_rectangle(700, 600, 700, 600);
+    all_bodies[4] = create_rectangle(100, 0, 800, 0);
+    all_bodies[5] = create_rectangle(800, 700, 800, 700);
     int num_body_goal = 5;
 
     
@@ -110,7 +100,10 @@ int main()
             }
             lines[0] = rotate_user_line(lines[0], user_dir, user_line_length);
         }
+        //Pause button is Q
         else if(IsKeyPressed(KEY_Q)) pause = !pause;
+        //Only update the game if pause is off
+        //Game state 2 is when the user has shot the lazer
         else if(game_state == 2 && frame_count%1==0 && !pause){
             //Check for collision
             col_ret = check_for_collision(current_loc, all_bodies, num_bodies);
@@ -176,18 +169,10 @@ int main()
             //print_text("line0start ",lines[0].start.x, 500,400,20);
             print_text("edge angle: ", hitboxes[4].edge_angle[2], 500, 220, 20);
             print_text("Game state: ", game_state, 500,200,20);
+            print_text("hitbox3edge3: ", hitboxes[3].edge_angle[3], 500, 240, 20);
+            print_text("hitbox edgestart3: ", hitboxes[3].edge_end[3].y, 500, 260, 20);
 
-            /*
-            char str[100];
-            float v_x = col_res;
-            sprintf(str, "%f", v_x);
-            char to_print[100];
-            strcpy(to_print, "collision: ");
-            strcat(to_print, str);
-            DrawText(to_print, 10, 400, 20, DARKGRAY);
-            */
             DrawFPS(10, 10);
-
         EndDrawing();
         //----------------------------------------------------------------------------------
         frame_count++;

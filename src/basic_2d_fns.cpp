@@ -178,12 +178,12 @@ collision_body assign_col_parameters(body_coords coords){
         body.edge_start[i] = coords.points[i];
         body.edge_end[i] = coords.points[i+1];
     }
-    body.edge_start[i+1] = coords.points[i+1];
-    body.edge_end[i+1] = coords.points[0];
+    body.edge_start[body.num_edges-1] = coords.points[coords.num_points-1];
+    body.edge_end[body.num_edges-1] = coords.points[0];
     //Assign edge norms
     //float edge_angle;
     for(i = 0; i<body.num_edges; i++){
-        if(abs(body.edge_end[i].x - body.edge_start[i].x)<1){
+        if(abs(body.edge_end[i].x - body.edge_start[i].x) < 1){
             //Accounts for vertical lines
             body.edge_angle[i] = PI/2;
         }
@@ -204,8 +204,8 @@ float calculate_collision_dir(location loc, collision_body col, int collision_ed
     float new_dir;
     new_dir = 2 * (col.edge_angle[collision_edge] - loc.dir) + loc.dir;
     //Correct for angles outside of range
-    //while(new_dir > PI) new_dir = new_dir - PI/2;
-    //while(new_dir < -PI) new_dir = new_dir + PI/2;
+    while(new_dir > PI) new_dir = new_dir - 2*PI;
+    while(new_dir < -PI) new_dir = new_dir + 2*PI;
     return new_dir;
 }
 
@@ -252,7 +252,7 @@ void draw_rectangles(body_coords* bodies, int num_bodies, int num_body_goal){
 }
 
 void draw_player(Vector2 current_loc){
-    DrawCircleV(current_loc, 10, MAROON);
+    DrawCircleV(current_loc, 20, MAROON);
 }
 
 //This is what will show while the user is selecting their direction
@@ -264,5 +264,11 @@ void draw_game_state(int game_state, line* lines, int num_lines, body_coords* re
         draw_rectangles(rectangles, num_bodies, num_body_goal);
 
         draw_line_series(lines, num_lines);
+    }
+
+    //Only happens after a lazer has been sent
+    if(game_state == 2){
+        //Take the last line, and take the end of it, this is the current location
+        draw_player(lines[num_lines-1].end);
     }
 }
