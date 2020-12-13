@@ -171,6 +171,14 @@ int main()
                 //Update line location
                 current_loc = update_location(current_loc, col_ret, hitboxes[level][col_ret.body]);
                 lines[num_lines-1].end = (Vector2){current_loc.x, current_loc.y};
+                if(current_loc.y > 950){ //The lazer has left the field of play, reset the level
+                    game_state-=1; //Decrement game_state by 1 to go back to user_input stage
+                    free(lines); //Prevent memory leaks
+                    num_lines = 1;
+                    lines = (line *)malloc(sizeof(line)); //Get this space back
+                    lines[0] = user_line; //Put back to user_line to get ready for user input
+                    user_dir = -PI/2; //Line is straight up by default
+                }
             }
             
             for(i = 0; i < num_lines; i++){
@@ -203,17 +211,17 @@ int main()
             EndMode2D();
 
             //("Collision: ", col_res, 10, 400, 20);
-            print_text("Dir: ",current_loc.dir, 10, 340,20);
-            print_text("X: ",current_loc.x, 10, 360,20);
+            //print_text("Dir: ",current_loc.dir, 10, 340,20);
+            //print_text("X: ",current_loc.x, 10, 360,20);
             //print_text("hitbox[1]angle: ", hitboxes[1].edge_angle[0], 10, 380, 20);
             //print_text("user start x: ",user_line.start.x, 500,380,20);
             //print_text("line0start ",lines[0].start.x, 500,400,20);
-            print_text("edge angle: ", hitboxes[level][4].edge_angle[2], 500, 220, 20);
-            print_text("Game state: ", game_state, 500,200,20);
-            print_text("hitbox3edge3: ", hitboxes[level][3].edge_angle[3], 500, 240, 20);
-            print_text("hitbox edgestart3: ", hitboxes[level][3].edge_end[3].y, 500, 260, 20);
+            //print_text("edge angle: ", hitboxes[level][4].edge_angle[2], 500, 220, 20);
+            //print_text("Game state: ", game_state, 500,200,20);
+            //print_text("hitbox3edge3: ", hitboxes[level][3].edge_angle[3], 500, 240, 20);
+            //print_text("hitbox edgestart3: ", hitboxes[level][3].edge_end[3].y, 500, 260, 20);
             if(level_done==1){
-                print_text("You won the level. Press C to continue",0,500,280,20);
+                print_text("You won the level. Press C to continue",-100,300,280,20);
             }
 
             DrawFPS(10, 10);

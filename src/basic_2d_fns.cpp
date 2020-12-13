@@ -16,12 +16,17 @@ struct location{
 
 //Prints a string and variable to place on screen and size
 void print_text(char* text, float num_to_print, int x, int y, int font_size){
-    char str[100];
-    sprintf(str, "%f", num_to_print);
-    char to_print[100];
-    strcpy(to_print, text);
-    strcat(to_print, str);
-    DrawText(to_print, x, y, font_size, DARKGRAY);
+    if(num_to_print==-100){//This is the null character flag
+        DrawText(text,x,y,font_size,DARKGRAY);
+    }
+    else{
+        char str[100];
+        sprintf(str, "%f", num_to_print);
+        char to_print[100];
+        strcpy(to_print, text);
+        strcat(to_print, str);
+        DrawText(to_print, x, y, font_size, DARKGRAY);
+    }
 }
 
 location update_location(location old_loc, collision_return col_ret, collision_body hitbox){
@@ -258,7 +263,7 @@ void draw_player(Vector2 current_loc){
 //This is what will show while the user is selecting their direction
 void draw_game_state(int game_state, line* lines, int num_lines, body_coords* rectangles, int num_bodies, int num_body_goal){
     if(game_state == 0){ //Title screen
-        print_text("Press space to start", 0, 200, 20, 40);
+        print_text("Welcome to the game!\nPress space to start!\nPress S to shoot your lazer\nPress q to pause\nReset the game with r\nAim your lazer with left and right arrows", -100, 200, 20, 40);
     }
     else{ //Level 1
         draw_rectangles(rectangles, num_bodies, num_body_goal);
