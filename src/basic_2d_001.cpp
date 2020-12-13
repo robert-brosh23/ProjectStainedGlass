@@ -26,20 +26,26 @@ int main()
     //--------------------------------------------------------------------------------------
     location starting_loc;
     location current_loc;
-    current_loc.speed = 20;
+    current_loc.speed = 15;
     current_loc.dir = convert_deg_to_rad(30);
     starting_loc = current_loc;
     int frame_count = 0;
-    int num_bodies[] = {7, 7};
-    int num_levels = 2;
+    int num_bodies[] = {7, 7, 9};
+    int num_levels = 3;
+    int i;
+    int max_num_bodies = -1; //The maximum number of bodies for any level
+    for(i = 0; i<num_levels; i++){ //for loop to find max in num_bodies array
+        if(num_bodies[i] > max_num_bodies) max_num_bodies = num_bodies[i];
+    }
     
-    int num_body_goal = 6;
-    int level = 0;
+    
+    int num_body_goal = 6; //This is the goal hitbox, what triggers level progression
+    int level = 0; //Current level
     //These are all the hitboxes of each level
     //2D list, the first index corresponds to the level of the hitbox,
-    //the second corresponds to the hitbox index of the level
-
-    body_coords level_bodies[num_levels][num_bodies[0]];
+    //the second corresponds to the hitbox index of the level.
+    //A very simple level editor
+    body_coords level_bodies[num_levels][max_num_bodies];
     level_bodies[0][0] = create_rectangle(1600, 0, 100, 0);
     level_bodies[0][1] = create_rectangle(100, 0, 800, 0);
     level_bodies[0][2] = create_rectangle(100, 0, 900, 700);
@@ -48,7 +54,6 @@ int main()
     level_bodies[0][5] = create_rectangle(600, 500, 300, 0);
     level_bodies[0][6] = create_rectangle(500, 400, 200, 150);
     
-
     level_bodies[1][0] = create_rectangle(1600, 0, 100, 0);
     level_bodies[1][1] = create_rectangle(100, 0, 800, 0);
     level_bodies[1][2] = create_rectangle(100, 0, 900, 700);
@@ -57,16 +62,25 @@ int main()
     level_bodies[1][5] = create_rectangle(1200, 700, 600, 400);
     level_bodies[1][6] = create_rectangle(700, 400, 200, 150);
 
-    int i;
+    level_bodies[2][0] = create_rectangle(1600, 0, 100, 0);
+    level_bodies[2][1] = create_rectangle(100, 0, 800, 0);
+    level_bodies[2][2] = create_rectangle(100, 0, 900, 700);
+    level_bodies[2][3] = create_rectangle(1600, 1500, 900, 0);
+    level_bodies[2][4] = create_rectangle(600, 0, 800, 540);
+    level_bodies[2][5] = create_rectangle(1200, 700, 600, 500);
+    level_bodies[2][6] = create_rectangle(700, 400, 200, 150);
+    level_bodies[2][7] = create_rectangle(1100, 400, 600, 500);
+    level_bodies[2][8] = create_rectangle(900, 800, 300, 100);
+    
+
+    
     //Assign collision parameters in all levels at the beginning
-    collision_body hitboxes[num_levels][num_bodies[0]];
+    collision_body hitboxes[num_levels][max_num_bodies];
     for(i = 0; i < num_levels; i++){
         for(int x = 0; x < num_bodies[i]; x++){
             hitboxes[i][x] = assign_col_parameters(level_bodies[i][x]);
         }
     }
-
-    //int col_res = -1;
 
     
     //Assigning collision body only needs to be done once.
