@@ -37,7 +37,7 @@ int main()
     all_bodies[2] = create_rectangle(100, 0, 900, 700);
     all_bodies[3] = create_rectangle(1600, 0, 100, 0);
     all_bodies[4] = create_rectangle(100, 0, 800, 0);
-    all_bodies[5] = create_rectangle(800, 700, 800, 700);
+    all_bodies[5] = create_rectangle(500, 400, 200, 150);
     int num_body_goal = 5;
 
     
@@ -107,7 +107,8 @@ int main()
         else if(game_state == 2 && frame_count%1==0 && !pause){
             //Check for collision
             col_ret = check_for_collision(current_loc, all_bodies, num_bodies);
-            if(col_ret.edge != -1){//This means a collision has occured
+            //Check if we have reached goal. If not, make a new line. If so, go to the next level.
+            if(col_ret.edge != -1 && col_ret.body != num_body_goal){//This means a collision has occured
                 //Make new line
                 num_lines = num_lines + 1;
                 //Endpoint of the last line is current_loc
@@ -117,9 +118,14 @@ int main()
                 //startpoint of new line is also current_loc
                 lines[num_lines-1].start = (Vector2){current_loc.x, current_loc.y};
             }
-            //Update line location
-            current_loc = update_location(current_loc, col_ret, hitboxes[col_ret.body]);
-            lines[num_lines-1].end = (Vector2){current_loc.x, current_loc.y};
+            if(col_ret.body == num_body_goal){ //Collided into goal hitbox, and the level is done
+                pause = 1;
+            }
+            else{
+                //Update line location
+                current_loc = update_location(current_loc, col_ret, hitboxes[col_ret.body]);
+                lines[num_lines-1].end = (Vector2){current_loc.x, current_loc.y};
+            }
             
             for(i = 0; i < num_lines; i++){
                 lines[i].color = RED;
@@ -171,6 +177,9 @@ int main()
             print_text("Game state: ", game_state, 500,200,20);
             print_text("hitbox3edge3: ", hitboxes[3].edge_angle[3], 500, 240, 20);
             print_text("hitbox edgestart3: ", hitboxes[3].edge_end[3].y, 500, 260, 20);
+            if(pause==1){
+                print_text("You won the level",0,500,280,20);
+            }
 
             DrawFPS(10, 10);
         EndDrawing();

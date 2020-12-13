@@ -30,7 +30,7 @@ location update_location(location old_loc, collision_return col_ret, collision_b
     if(col_ret.edge != -1){ //Add another line
         //Collision reaction
         int i = col_ret.edge;
-        print_text("edge angle collided: ", hitbox.edge_angle[i], 500, 380, 20);
+        //print_text("edge angle collided: ", hitbox.edge_angle[i], 500, 380, 20);
         new_loc.dir = calculate_collision_dir(old_loc, hitbox, i);
     }
     else new_loc.dir = old_loc.dir;
@@ -241,7 +241,7 @@ void draw_rectangles(body_coords* bodies, int num_bodies, int num_body_goal){
         if(i == num_body_goal){
             DrawRectangle(bodies[i].points[0].x, bodies[i].points[0].y, 
                 bodies[i].points[2].x-bodies[i].points[0].x, 
-                bodies[i].points[2].y-bodies[i].points[0].y, MAROON);
+                bodies[i].points[2].y-bodies[i].points[0].y, BLACK);
         }
         else{
             DrawRectangle(bodies[i].points[0].x, bodies[i].points[0].y, 
