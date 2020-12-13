@@ -260,14 +260,14 @@ void draw_game_state(int game_state, line* lines, int num_lines, body_coords* re
     if(game_state == 0){ //Title screen
         print_text("Press space to start", 0, 200, 20, 40);
     }
-    if(game_state == 1 || game_state == 2){ //Level 1
+    else{ //Level 1
         draw_rectangles(rectangles, num_bodies, num_body_goal);
 
         draw_line_series(lines, num_lines);
     }
 
     //Only happens after a lazer has been sent
-    if(game_state == 2){
+    if(game_state%2 == 0 && game_state != 0){
         //Take the last line, and take the end of it, this is the current location
         draw_player(lines[num_lines-1].end);
     }

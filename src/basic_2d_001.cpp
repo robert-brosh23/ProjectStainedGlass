@@ -15,6 +15,7 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib");
 
+    // Initialize camera as 2d
     Camera2D camera = { 0 };
     camera.offset = (Vector2){ 0.0f, 0.0f };
     camera.target = (Vector2){ 0.0, 0.0 };
@@ -25,26 +26,44 @@ int main()
     //--------------------------------------------------------------------------------------
     location starting_loc;
     location current_loc;
-    current_loc.speed = 10;
+    current_loc.speed = 20;
     current_loc.dir = convert_deg_to_rad(30);
     starting_loc = current_loc;
     int frame_count = 0;
-    int num_bodies = 6;
+    int num_bodies[] = {7, 7};
+    int num_levels = 2;
+    
+    int num_body_goal = 6;
+    int level = 0;
+    //These are all the hitboxes of each level
+    //2D list, the first index corresponds to the level of the hitbox,
+    //the second corresponds to the hitbox index of the level
 
-    body_coords all_bodies[num_bodies];
-    all_bodies[0] = create_rectangle(500,200,300,250);
-    all_bodies[1] = create_rectangle(600, 500, 300, 0);
-    all_bodies[2] = create_rectangle(100, 0, 900, 700);
-    all_bodies[3] = create_rectangle(1600, 0, 100, 0);
-    all_bodies[4] = create_rectangle(100, 0, 800, 0);
-    all_bodies[5] = create_rectangle(500, 400, 200, 150);
-    int num_body_goal = 5;
-
+    body_coords level_bodies[num_levels][num_bodies[0]];
+    level_bodies[0][0] = create_rectangle(1600, 0, 100, 0);
+    level_bodies[0][1] = create_rectangle(100, 0, 800, 0);
+    level_bodies[0][2] = create_rectangle(100, 0, 900, 700);
+    level_bodies[0][3] = create_rectangle(1600, 1500, 900, 0);
+    level_bodies[0][4] = create_rectangle(500,200,300,250);
+    level_bodies[0][5] = create_rectangle(600, 500, 300, 0);
+    level_bodies[0][6] = create_rectangle(500, 400, 200, 150);
     
 
-    collision_body hitboxes[num_bodies];
-    for(int x = 0; x < num_bodies; x++){
-        hitboxes[x] = assign_col_parameters(all_bodies[x]);
+    level_bodies[1][0] = create_rectangle(1600, 0, 100, 0);
+    level_bodies[1][1] = create_rectangle(100, 0, 800, 0);
+    level_bodies[1][2] = create_rectangle(100, 0, 900, 700);
+    level_bodies[1][3] = create_rectangle(1600, 1500, 900, 0);
+    level_bodies[1][4] = create_rectangle(600, 0, 800, 540);
+    level_bodies[1][5] = create_rectangle(1200, 700, 600, 400);
+    level_bodies[1][6] = create_rectangle(700, 400, 200, 150);
+
+    int i;
+    //Assign collision parameters in all levels at the beginning
+    collision_body hitboxes[num_levels][num_bodies[0]];
+    for(i = 0; i < num_levels; i++){
+        for(int x = 0; x < num_bodies[i]; x++){
+            hitboxes[i][x] = assign_col_parameters(level_bodies[i][x]);
+        }
     }
 
     //int col_res = -1;
@@ -55,8 +74,6 @@ int main()
     //int overlap = 0;
     // Main game loop
     bool pause = 0;
-    int i;
-    int user_input = 1;
     line user_line;
     int user_line_length = 400;
     user_line.start = (Vector2){screenWidth/2 * (1/camera.zoom), screenHeight * (1/camera.zoom)};
@@ -72,22 +89,37 @@ int main()
     lines[0] = user_line;
     
     int game_state = 0;
+    bool level_done = 0;
 
     collision_return col_ret;
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
         // Update
         //----------------------------------------------------------------------------------
-        if(game_state == 0){
-            if(IsKeyPressed(KEY_SPACE)){
-                game_state = 1;
+        if(level_done){
+            if(IsKeyPressed(KEY_C)){
+                game_state ++; //Game state will now be odd, waiting for user input again
+                level ++;
+                level_done = 0;
+                free(lines);
+                num_lines = 1;
+                lines = (line *)malloc(sizeof(line));
+                lines[0] = user_line;
+                user_dir = -PI/2;
             }
         }
-        if(game_state == 1){
+        //This is the title screen
+        else if(game_state == 0){
+            if(IsKeyPressed(KEY_SPACE)){
+                game_state ++;
+            }
+        }
+        //If game state is odd, we are waiting for user input
+        else if(game_state%2 == 1){
             //We are waiting for the user input
             current_loc.dir = user_dir;
             if(IsKeyPressed(KEY_S)){
-                game_state = 2;
+                game_state ++;
                 lines[0].start = user_line.start;
                 current_loc.x = lines[0].start.x;
                 current_loc.y = lines[0].start.y;
@@ -103,10 +135,10 @@ int main()
         //Pause button is Q
         else if(IsKeyPressed(KEY_Q)) pause = !pause;
         //Only update the game if pause is off
-        //Game state 2 is when the user has shot the lazer
-        else if(game_state == 2 && frame_count%1==0 && !pause){
+        //Game state is even is when the user has shot the lazer and we continuously update the location
+        else if(game_state%2 == 0 && frame_count%1==0 && !pause && game_state != 0){
             //Check for collision
-            col_ret = check_for_collision(current_loc, all_bodies, num_bodies);
+            col_ret = check_for_collision(current_loc, level_bodies[level], num_bodies[level]);
             //Check if we have reached goal. If not, make a new line. If so, go to the next level.
             if(col_ret.edge != -1 && col_ret.body != num_body_goal){//This means a collision has occured
                 //Make new line
@@ -119,11 +151,11 @@ int main()
                 lines[num_lines-1].start = (Vector2){current_loc.x, current_loc.y};
             }
             if(col_ret.body == num_body_goal){ //Collided into goal hitbox, and the level is done
-                pause = 1;
+                level_done = 1;
             }
             else{
                 //Update line location
-                current_loc = update_location(current_loc, col_ret, hitboxes[col_ret.body]);
+                current_loc = update_location(current_loc, col_ret, hitboxes[level][col_ret.body]);
                 lines[num_lines-1].end = (Vector2){current_loc.x, current_loc.y};
             }
             
@@ -134,11 +166,12 @@ int main()
         }
         if(IsKeyPressed(KEY_R)){ //Reset game
             game_state = 0;
-            free(lines);
-            num_lines = 1;
-            lines = (line *)malloc(sizeof(line));
-            lines[0] = user_line;
-            user_dir = -PI/2;
+            level = 0;
+            free(lines); //Prevent memory leaks
+            num_lines = 1; //Reset number of lines to 1
+            lines = (line *)malloc(sizeof(line)); //Get this space back
+            lines[0] = user_line; //Put back to user_line to get ready for user input
+            user_dir = -PI/2; //Line is straight up by default
         }
         // Draw
         //----------------------------------------------------------------------------------
@@ -149,20 +182,8 @@ int main()
 
             BeginMode2D(camera);
 
-                //DrawRectangle(rectangle.points[0].x, rectangle.points[0].y, 
-                //    rectangle.points[2].x-rectangle.points[0].x, 
-                //    rectangle.points[2].y-rectangle.points[0].y, BLUE);
-                /*
-                draw_rectangles(all_bodies, num_bodies);
-                
-                draw_line_series(lines, num_lines);
 
-                if(user_input==1){
-                    draw_user_features();
-                    draw_line_series(&user_line, 1);
-                }
-                */
-               draw_game_state(game_state, lines, num_lines, all_bodies, num_bodies, num_body_goal);
+               draw_game_state(game_state, lines, num_lines, level_bodies[level], num_bodies[level], num_body_goal);
                 
 
             EndMode2D();
@@ -173,12 +194,12 @@ int main()
             //print_text("hitbox[1]angle: ", hitboxes[1].edge_angle[0], 10, 380, 20);
             //print_text("user start x: ",user_line.start.x, 500,380,20);
             //print_text("line0start ",lines[0].start.x, 500,400,20);
-            print_text("edge angle: ", hitboxes[4].edge_angle[2], 500, 220, 20);
+            print_text("edge angle: ", hitboxes[level][4].edge_angle[2], 500, 220, 20);
             print_text("Game state: ", game_state, 500,200,20);
-            print_text("hitbox3edge3: ", hitboxes[3].edge_angle[3], 500, 240, 20);
-            print_text("hitbox edgestart3: ", hitboxes[3].edge_end[3].y, 500, 260, 20);
-            if(pause==1){
-                print_text("You won the level",0,500,280,20);
+            print_text("hitbox3edge3: ", hitboxes[level][3].edge_angle[3], 500, 240, 20);
+            print_text("hitbox edgestart3: ", hitboxes[level][3].edge_end[3].y, 500, 260, 20);
+            if(level_done==1){
+                print_text("You won the level. Press C to continue",0,500,280,20);
             }
 
             DrawFPS(10, 10);
