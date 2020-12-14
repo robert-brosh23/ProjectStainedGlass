@@ -135,6 +135,8 @@ int main()
             if(IsKeyPressed(KEY_S)){
                 game_state ++;
                 lines[0].start = user_line.start;
+                current_loc.act_x = lines[0].start.x;
+                current_loc.act_y = lines[0].start.y;
                 current_loc.x = lines[0].start.x;
                 current_loc.y = lines[0].start.y;
             }

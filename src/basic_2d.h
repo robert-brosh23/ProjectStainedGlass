@@ -4,6 +4,8 @@
 
 // location parameter including coords, speed, and direction
 struct location{
+    double act_x;
+    double act_y;
     int x;
     int y;
     int speed;

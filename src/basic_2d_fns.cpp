@@ -5,16 +5,8 @@
 #include "raylib.h"
 #include "basic_2d.h"
 
-/*
-struct location{
-    int x;
-    int y;
-    int speed;
-    int dir;
-}typedef location;
-*/
-
-//Prints a string and variable to place on screen and size
+//Prints a string and variable to place on screen and size.  Pass in -100 as the
+//num_to_print parameter if you do not want a number to be printed, only text
 void print_text(char* text, float num_to_print, int x, int y, int font_size){
     if(num_to_print==-100){//This is the null character flag
         DrawText(text,x,y,font_size,DARKGRAY);
@@ -29,6 +21,8 @@ void print_text(char* text, float num_to_print, int x, int y, int font_size){
     }
 }
 
+//Update location handles where the player is, using its old location and the collision status.
+//Hitbox is also passed in so new location direction can be calculated if there is a collision
 location update_location(location old_loc, collision_return col_ret, collision_body hitbox){
     location new_loc;
 
@@ -40,8 +34,13 @@ location update_location(location old_loc, collision_return col_ret, collision_b
     }
     else new_loc.dir = old_loc.dir;
     //Calculate new location using equation x = x_0 + v_x*dt
-    new_loc.x = round((float)old_loc.x + cos((float)new_loc.dir)*(float)old_loc.speed);
-    new_loc.y = round((float)old_loc.y + sin((float)new_loc.dir)*(float)old_loc.speed);
+    //Use double precision location to compute new location, then we must display the location in integer form
+    new_loc.act_x = (float)old_loc.act_x + cos((float)new_loc.dir)*(float)old_loc.speed;
+    new_loc.act_y = (float)old_loc.act_y + sin((float)new_loc.dir)*(float)old_loc.speed;
+    //Round double precision location to the nearest whole number.  This needs to be done because there are only
+    //integer pixels on the screen, i.e., you cannot place the player on a half pixel
+    new_loc.x = round(new_loc.act_x);
+    new_loc.y = round(new_loc.act_y);
     new_loc.speed = old_loc.speed;
     
     return(new_loc);
@@ -69,6 +68,8 @@ collision_return check_for_collision(location loc, body_coords* bodies, int num_
     col_ret.body = -1;
     col_ret.edge = -1;
     //Create collision bounds
+    //Look for the largest x value for right edge, smallest for left
+    //Look for the largest y value for top edge, smallest for bottom
     for(j = 0; j<num_bodies; j++){ 
         for(i = 0; i<bodies[j].num_points; i++){
             if(bodies[j].points[i].x > right_edge_cord[j]){
@@ -163,6 +164,7 @@ bool faces_up(location loc){
     else return 0;
 }
 
+//Form rectangle endpoints in Vector2 format from X and Y bounds as arguments
 body_coords create_rectangle(int x_upper, int x_lower, int y_upper, int y_lower){
     body_coords rectangle;
     rectangle.num_points = 4;
@@ -173,6 +175,9 @@ body_coords create_rectangle(int x_upper, int x_lower, int y_upper, int y_lower)
     return rectangle;
 }
 
+//Assign collision parameters using coordinates of a body.
+//This includes an edge start and endpoint, and its angle.
+//Angle is used to calculate new direction after collision
 collision_body assign_col_parameters(body_coords coords){
     int i = 0;
     collision_body body;
@@ -205,6 +210,7 @@ collision_body assign_col_parameters(body_coords coords){
     return body;
 }
 
+//Use mirror reflection equation to calculate the new direction.  Angle of incidence = angle of reflection
 float calculate_collision_dir(location loc, collision_body col, int collision_edge){
     float new_dir;
     new_dir = 2 * (col.edge_angle[collision_edge] - loc.dir) + loc.dir;
@@ -214,6 +220,7 @@ float calculate_collision_dir(location loc, collision_body col, int collision_ed
     return new_dir;
 }
 
+//Used in user input phase to calculate new line with current line and direction
 line rotate_user_line(line user_line, float user_dir, int user_line_length){
     line new_user_line;
     //Always keep line start at the same place
@@ -243,6 +250,7 @@ void draw_line_series(line* lines, int num_lines){
 void draw_rectangles(body_coords* bodies, int num_bodies, int num_body_goal){
     int i = 0;
     for(i = 0; i < num_bodies; i++){
+        //Draw goal body a different color than the rest
         if(i == num_body_goal){
             DrawRectangle(bodies[i].points[0].x, bodies[i].points[0].y, 
                 bodies[i].points[2].x-bodies[i].points[0].x, 
@@ -256,6 +264,8 @@ void draw_rectangles(body_coords* bodies, int num_bodies, int num_body_goal){
     }
 }
 
+//The player is a dot at the player's current location so it is easier to tell
+//where the player is
 void draw_player(Vector2 current_loc){
     DrawCircleV(current_loc, 20, MAROON);
 }
@@ -263,7 +273,7 @@ void draw_player(Vector2 current_loc){
 //This is what will show while the user is selecting their direction
 void draw_game_state(int game_state, line* lines, int num_lines, body_coords* rectangles, int num_bodies, int num_body_goal){
     if(game_state == 0){ //Title screen
-        print_text("Welcome to the game!\nPress space to start!\nPress S to shoot your lazer\nPress q to pause\nReset the game with r\nAim your lazer with left and right arrows", -100, 200, 20, 40);
+        print_text("Welcome to the game!\nPress space to start!\nPress S to shoot your lazer\nPress q to pause\nReset the game with r\nAim your lazer with left and right arrows\nAim for the black rectangle!", -100, 200, 20, 40);
     }
     else{ //Level 1
         draw_rectangles(rectangles, num_bodies, num_body_goal);
