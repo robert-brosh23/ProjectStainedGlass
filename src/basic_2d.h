@@ -40,7 +40,7 @@ struct collision_return{
     int edge;
 }typedef collision_return;
 
-//Debugging functions
+//Debugging/printing functions
 void print_text(char* text, float num_to_print, int x, int y, int font_size);
 
 //Core functions

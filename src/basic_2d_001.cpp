@@ -104,6 +104,7 @@ int main()
     
     int game_state = 0;
     bool level_done = 0;
+    bool game_done = 0;
 
     collision_return col_ret;
     while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -112,9 +113,16 @@ int main()
         //----------------------------------------------------------------------------------
         if(level_done){
             if(IsKeyPressed(KEY_C)){
-                game_state ++; //Game state will now be odd, waiting for user input again
-                level ++;
-                level_done = 0;
+                if(level == 2){
+                    game_done = 1;
+                    game_state = -1;
+                    free(lines);
+                }
+                else{
+                    game_state ++; //Game state will now be odd, waiting for user input again
+                    level ++;
+                    level_done = 0;
+                }
                 free(lines);
                 num_lines = 1;
                 lines = (line *)malloc(sizeof(line));
@@ -189,6 +197,8 @@ int main()
             }
         }
         if(IsKeyPressed(KEY_R)){ //Reset game
+            game_done = 0;
+            level_done = 0;
             game_state = 0;
             level = 0;
             free(lines); //Prevent memory leaks
@@ -222,9 +232,10 @@ int main()
             //print_text("Game state: ", game_state, 500,200,20);
             //print_text("hitbox3edge3: ", hitboxes[level][3].edge_angle[3], 500, 240, 20);
             //print_text("hitbox edgestart3: ", hitboxes[level][3].edge_end[3].y, 500, 260, 20);
-            if(level_done==1){
+            if(level_done==1 && game_done == 0){
                 print_text("You won the level. Press C to continue",-100,300,280,20);
             }
+
 
             DrawFPS(10, 10);
         EndDrawing();

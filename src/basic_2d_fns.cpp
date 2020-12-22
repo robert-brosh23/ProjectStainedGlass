@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -97,8 +98,6 @@ collision_return check_for_collision(location loc, body_coords* bodies, int num_
     int del_x;
     int del_y;
 
-    //ADD [i] to all right left down and top coords
-    //ADD return col_ret.body = i to all IF statements
     for(i = 0; i < num_bodies; i++){
         //This if statement checks if current location lies inside of a collision box
         if(loc.x > left_edge_cord[i] && loc.x < right_edge_cord[i] && loc.y > top_edge_cord[i] && loc.y < bot_edge_cord[i]){
@@ -272,7 +271,10 @@ void draw_player(Vector2 current_loc){
 
 //This is what will show while the user is selecting their direction
 void draw_game_state(int game_state, line* lines, int num_lines, body_coords* rectangles, int num_bodies, int num_body_goal){
-    if(game_state == 0){ //Title screen
+    if(game_state == -1){//Finish screen
+        print_text("Congratulations!\nYou won the game!\nPress 'r' to reset the game", -100,200, 20, 40);
+    }
+    else if(game_state == 0){ //Title screen
         print_text("Welcome to the game!\nPress space to start!\nPress S to shoot your lazer\nPress q to pause\nReset the game with r\nAim your lazer with left and right arrows\nAim for the black rectangle!", -100, 200, 20, 40);
     }
     else{ //Level 1
