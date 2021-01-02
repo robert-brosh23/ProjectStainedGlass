@@ -30,7 +30,7 @@ int main()
     current_loc.dir = convert_deg_to_rad(30);
     starting_loc = current_loc;
     int frame_count = 0;
-    int num_bodies[] = {7, 7, 9};
+    int num_bodies[] = {8, 7, 9};
     int num_levels = 3;
     int i;
     int max_num_bodies = -1; //The maximum number of bodies for any level
@@ -53,6 +53,8 @@ int main()
     level_bodies[0][4] = create_rectangle(500,200,300,250);
     level_bodies[0][5] = create_rectangle(600, 500, 300, 0);
     level_bodies[0][6] = create_rectangle(500, 400, 200, 150);
+    Vector2 triangle[] = {(Vector2){900,300}, (Vector2){900, 600}, (Vector2){1000, 600}};
+    level_bodies[0][7] = create_triangle(triangle);
     
     level_bodies[1][0] = create_rectangle(1600, 0, 100, 0);
     level_bodies[1][1] = create_rectangle(100, 0, 800, 0);

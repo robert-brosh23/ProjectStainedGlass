@@ -47,6 +47,13 @@ location update_location(location old_loc, collision_return col_ret, collision_b
     return(new_loc);
 }
 
+collision_return seperate_axis_theorem(location loc, collision_body* bodies, int num_bodies){
+    int i = 0;
+    for(i = 0; i < num_bodies; i++){
+        
+    }
+}
+
 //Returns -1 for no collision
 //Returns 0 if collision occurs on right
 //Returns 1 if collision occurs on bottom
@@ -174,6 +181,17 @@ body_coords create_rectangle(int x_upper, int x_lower, int y_upper, int y_lower)
     return rectangle;
 }
 
+//Create triangle from verticies
+body_coords create_triangle(Vector2 verticies[3]){
+    body_coords triangle;
+    triangle.num_points = 3;
+    int i = 0;
+    for(i = 0; i < triangle.num_points; i++){
+        triangle.points[i] = verticies[i];
+    }
+    return triangle;
+}
+
 //Assign collision parameters using coordinates of a body.
 //This includes an edge start and endpoint, and its angle.
 //Angle is used to calculate new direction after collision
@@ -201,7 +219,7 @@ collision_body assign_col_parameters(body_coords coords){
                                     (float)(body.edge_end[i].x-body.edge_start[i].x));
         }
         //Check for angles out of bounds
-        //i.e, and angle of 100 / should look like an angle of -80 / .
+        //i.e, an angle of 100 / should look like an angle of -80 / .
         while(body.edge_angle[i] > (PI/2 + .01)) body.edge_angle[i] = body.edge_angle[i] - PI/2;
         while(body.edge_angle[i] < (-PI/2 - .01)) body.edge_angle[i] = body.edge_angle[i] + PI/2;
         //body.edge_norm[i] = (float)90+edge_angle;
@@ -263,6 +281,51 @@ void draw_rectangles(body_coords* bodies, int num_bodies, int num_body_goal){
     }
 }
 
+void draw_triangles(body_coords* bodies, int num_bodies, int num_body_goal){
+    int i = 0;
+    for(i = 0; i < num_bodies; i++){
+        //Draw goal body a different color than the rest
+        if(i == num_body_goal){
+            DrawTriangle(bodies[i].points[0], bodies[i].points[1], bodies[i].points[2], BLACK);
+        }
+        else{
+            DrawTriangle(bodies[i].points[0], bodies[i].points[1], bodies[i].points[2], BLUE);
+        }
+    }
+}
+
+void draw_polys(body_coords* bodies, int num_bodies, int num_body_goal){
+    int i = 0;
+    int num_rectangles = 0;
+    int num_triangles = 0;
+    //These are defaulted to -1 so they wont be accidently triggered
+    int num_body_goal_rect = -1;
+    int num_body_goal_tri = -1;
+    body_coords rectangles[num_bodies];
+    body_coords triangles[num_bodies];
+    //Seperate out list of bodies into lists of triangles and rectangles
+    for(i = 0; i < num_bodies; i++){
+        //Seperate body based on number of points
+        if(bodies[i].num_points == 4){
+            rectangles[num_rectangles] = bodies[i];
+            if(i==num_body_goal){
+                num_body_goal_rect = num_rectangles;
+            }
+            num_rectangles++;
+        }
+        if(bodies[i].num_points == 3){
+            triangles[num_triangles] = bodies[i];
+            if(i==num_body_goal){
+                num_body_goal_tri = num_triangles;
+            }
+            num_triangles++;
+        }
+    }
+    //Draw lists of shapes
+    draw_rectangles(rectangles, num_rectangles, num_body_goal_rect);
+    draw_triangles(triangles, num_triangles, num_body_goal_tri);
+}
+
 //The player is a dot at the player's current location so it is easier to tell
 //where the player is
 void draw_player(Vector2 current_loc){
@@ -278,7 +341,7 @@ void draw_game_state(int game_state, line* lines, int num_lines, body_coords* re
         print_text("Welcome to the game!\nPress space to start!\nPress S to shoot your lazer\nPress q to pause\nReset the game with r\nAim your lazer with left and right arrows\nAim for the black rectangle!", -100, 200, 20, 40);
     }
     else{ //Level 1
-        draw_rectangles(rectangles, num_bodies, num_body_goal);
+        draw_polys(rectangles, num_bodies, num_body_goal);
 
         draw_line_series(lines, num_lines);
     }
